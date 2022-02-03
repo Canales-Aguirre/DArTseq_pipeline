@@ -1,0 +1,10 @@
+#!/bin/bash
+
+for file in ./*FASTQ.gz; do
+	SAMPLE=`basename $file .gz`
+	gunzip $file
+	python3 Identify_barcode.py -f "$SAMPLE" -e PstI --symbol @A
+	gzip "$SAMPLE"
+done
+
+exit 1;

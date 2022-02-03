@@ -1,0 +1,55 @@
+#!/bin/bash
+
+#############################################
+#Preprocessing with GBprocesS (Cutadapt v3.3)
+#############################################
+
+gbprocess --debug -c Gbprocess_SE.ini
+
+rm -r untrimmed*
+rm -r *Trimmed*
+rm -r *.out
+
+#############################################
+#Statistics of FASTQ files with fast/multiqc
+#############################################
+
+for file in ./*GBprocesS.fastq.gz; do
+	fastqc -j /usr/bin/java $file
+done
+
+multiqc .
+
+rm -r multiqc_data/
+
+#############################################
+#Mapping with BWA and sorting with picard
+#############################################
+
+for file in ./*GBprocesS.fastq.gz; do
+	bwa mem ./Reference/Musac_pahang_Ref.fasta $file > "${file%.GBprocesS.fastq.gz}.sam"
+done
+
+for file in ./*sam; do
+	CONDITION=`basename $file .sam`
+	/usr/bin/java -Xmx4G -jar ./Dependencies/picard.jar AddOrReplaceReadGroups -I $file -O "${file%.sam}.sorted.bam" --CREATE_INDEX -SO coordinate -RGLB "$CONDITION" -RGPL illumina -RGPU run -RGSM "$CONDITION" -RGID "$CONDITION"
+done
+
+#############################################
+#Variant Calling with FreeBayes v1.3.5
+#############################################
+
+for file in ./*sorted.bam; do
+	echo "Variant Calling with FreeBayes v1.3.5 on $file..."
+	freebayes -f ./Reference/Musac_pahang_Ref.fasta --genotype-qualities --strict-vcf $file > "${file%.sorted.bam}.freebayes.vcf"
+done
+
+#############################################
+#Variant filtering with GATK v4.2
+#############################################
+
+for file in ./*freebayes.vcf; do
+	./Dependencies/GATK4.2/gatk --java-options -Xmx4G SelectVariants -R ./Reference/Musac_pahang_Ref.fasta -V $file --select-type-to-include SNP -O "${file%.freebayes.vcf}.vcf"
+done
+
+exit 1;
