@@ -8,3 +8,5 @@ Gbprocess_SE.ini contains the specifics for the GBprocesS analysis. Files need t
 The DArTseq_pipeline.txt is a bash script that runs multiple commands for every FASTQ.gz file in the directory.
 
 Output are VCF files.
+
+![DArTseq_pipeline](https://user-images.githubusercontent.com/91179859/153420119-d8b21336-0e79-4842-8f80-85ed7b449bf8.png)
