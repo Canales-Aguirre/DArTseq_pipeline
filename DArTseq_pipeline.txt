@@ -15,7 +15,8 @@ rm -r *.out
 #############################################
 
 for file in ./*GBprocesS.fastq.gz; do
-	echo $file
+	now = $(date)
+	echo "$now $file"
 	fastqc -j /usr/bin/java $file
 done
 
@@ -28,7 +29,8 @@ rm -r multiqc_data/
 #############################################
 
 for file in ./*GBprocesS.fastq.gz; do
-	echo $file
+	now = $(date)
+	echo "$now $file"
 	bwa mem ./Reference/Musac_pahang_Ref.fasta $file > "${file%.GBprocesS.fastq.gz}.sam"
 done
 
@@ -42,7 +44,8 @@ done
 #############################################
 
 for file in ./*sorted.bam; do
-	echo "Variant Calling with FreeBayes v1.3.5 on $file..."
+	now = $(date)
+	echo "$now Variant Calling with FreeBayes v1.3.5 on $file..."
 	freebayes -f ./Reference/Musac_pahang_Ref.fasta --genotype-qualities --strict-vcf $file > "${file%.sorted.bam}.freebayes.vcf"
 done
 
