@@ -1,10 +1,16 @@
 #!/bin/bash
 
+#for gzipped files
 for file in ./*FASTQ.gz; do
 	SAMPLE=`basename $file .gz`
 	gunzip $file
 	python3 Identify_barcode.py -f "$SAMPLE" -e PstI --symbol @A
 	gzip "$SAMPLE"
 done
+
+#for fasta/fastq files
+# for file in ./*fasta; do #can be fastq
+#	python3 Identify_barcode.py -f "$file" -e PstI --symbol @A
+# done
 
 exit 1;
