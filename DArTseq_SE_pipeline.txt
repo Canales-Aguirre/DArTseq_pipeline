@@ -1,5 +1,7 @@
 #!/bin/bash
 
+REF=./Reference/Musac_pahang_Ref.fasta
+
 #############################################
 #Preprocessing with GBprocesS (Cutadapt v3.3)
 #############################################
@@ -31,7 +33,7 @@ rm -r multiqc_data/
 for file in ./*GBprocesS.fastq.gz; do
 	date "+%H:%M:%S   %d/%m/%y"
 	echo "$file"
-	bwa mem ./Reference/Musac_pahang_Ref.fasta $file > "${file%.GBprocesS.fastq.gz}.sam"
+	bwa mem $REF $file > "${file%.GBprocesS.fastq.gz}.sam"
 done
 
 for file in ./*sam; do
@@ -46,7 +48,7 @@ done
 for file in ./*sorted.bam; do
 	date "+%H:%M:%S   %d/%m/%y"
 	echo "Variant Calling with FreeBayes v1.3.5 on $file..."
-	freebayes -f ./Reference/Musac_pahang_Ref.fasta --genotype-qualities --strict-vcf $file > "${file%.sorted.bam}.freebayes.vcf"
+	freebayes -f $REF --genotype-qualities --strict-vcf $file > "${file%.sorted.bam}.freebayes.vcf"
 done
 
 #############################################
@@ -54,7 +56,7 @@ done
 #############################################
 
 for file in ./*freebayes.vcf; do
-	./Dependencies/GATK4.2/gatk --java-options -Xmx4G SelectVariants -R ./Reference/Musac_pahang_Ref.fasta -V $file --select-type-to-include SNP -O "${file%.freebayes.vcf}.vcf"
+	./Dependencies/GATK4.2/gatk --java-options -Xmx4G SelectVariants -R $REF -V $file --select-type-to-include SNP -O "${file%.freebayes.vcf}.vcf"
 done
 
 exit 1;
