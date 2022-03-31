@@ -1,0 +1,58 @@
+#!/bin/bash
+
+#############################################
+#Preprocessing with Cutadapt v3.3
+#############################################
+
+for file in ./*_1.fq.gz; do
+	cutadapt -g TGCAG -o "${file%_1.fq.gz}_f.fq.gz" $file
+done
+
+rm *_1.fq.gz
+
+#############################################
+#Statistics of FASTQ files with fast/multiqc
+#############################################
+
+for file in ./*fq.gz; do
+	echo $file
+	fastqc -j /usr/bin/java $file
+done
+
+multiqc .
+
+rm -r multiqc_data/
+
+#############################################
+#Mapping with BWA and sorting with picard
+#############################################
+
+for file in ./*_f.fq.gz; do
+	root=`basename $file _f.fq.gz`
+	echo "BWA MEM mapping of $file and "${root}_2.fq.gz" on reference..."
+	bwa mem ./Reference/Musba_Ref.fna $file "${root}_2.fq.gz" > "${root}.sam"
+done
+
+for file in ./*sam; do
+	CONDITION=`basename $file .sam`
+	/usr/bin/java -Xmx4G -jar ./Dependencies/picard.jar AddOrReplaceReadGroups -I $file -O "${file%.sam}.sorted.bam" --CREATE_INDEX -SO coordinate -RGLB "$CONDITION" -RGPL illumina -RGPU run -RGSM "$CONDITION" -RGID "$CONDITION"
+done
+
+#############################################
+#Variant Calling with FreeBayes v1.3.5
+#############################################
+
+for file in ./*sorted.bam; do
+	echo "Variant Calling with FreeBayes v1.3.5 on $file..."
+	freebayes -f ./Reference/Musba_Ref.fna --genotype-qualities --strict-vcf $file > "${file%.sorted.bam}.freebayes.vcf"
+done
+
+#############################################
+#Variant filtering with GATK v4.2
+#############################################
+
+for file in ./*freebayes.vcf; do
+	./Dependencies/GATK4.2/gatk --java-options -Xmx4G SelectVariants -R ./Reference/Musba_Ref.fna -V $file --select-type-to-include SNP -O "${file%.freebayes.vcf}.vcf"
+done
+
+exit 1;
