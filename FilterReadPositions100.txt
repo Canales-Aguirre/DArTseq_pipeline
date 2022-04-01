@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#tools: bamtools, bedops, samtools, SMAP
+
+for file in ./*bam; do
+	samtools view $file chr{01..11} -b > "${file%.bam}.chr.bam"
+done
+
+for file in ./*chr.bam; do
+	bamtools split -in $file -reference
+done
+
+for i in {01..11}; do
+	mkdir "chrom$i"
+	mv *chr$i* ./"chrom$i"/
+done
+
+for file in ./chrom*/*bam; do
+	samtools index $file
+done
+
+for i in {01..11}; do
+	smap delineate "chrom$i"/ -r stranded -p 4 -q 20 -s 20 -x 3 -y 1500 -w 95
+	mv *Set1_C95.0_SMAP20_CL0_inf.bed "ReadPositionsChr$i.bed"
+done
+
+bedops --merge ReadPositionsChr* > CompletePositions.bed
