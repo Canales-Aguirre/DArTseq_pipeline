@@ -1,0 +1,59 @@
+#This refined installation guide is based on the following sources:
+#Youtube: https://www.youtube.com/watch?v=tAScTlKW60w
+#Github Guide: https://gist.github.com/josiahaltschuler/a063e03b4197013def53f9a0abc6dfed
+
+#replace USERNAME with YOUR ubuntu account name!
+#update system and install packages
+sudo apt update
+sudo apt upgrade
+sudo add-apt-repository universe
+sudo apt install python2 virtualenv
+
+#create and activate python2 virtual environment
+virtualenv --python=$(which python2) /home/USERNAME/python2env/
+source /home/USERNAME/python2env/bin/activate #terminate with "deactivate"
+
+#install dependencies (==VERSION)
+pip install numpy==1.16.5
+pip install cython==0.27.3
+pip install scipy==1.2.1
+mkdir /home/USERNAME/bin
+cd /home/USERNAME/bin
+
+#download and install latest gsl
+wget ftp://ftp.gnu.org/gnu/gsl/gsl-2.7.tar.gz
+tar -xf gsl-2.7.tar.gz
+cd gsl-2.7
+./configure --prefix=/home/USERNAME/bin/gsl-2.7
+make
+make check
+make install
+
+#in .bashrc add, or update exports
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/USERNAME/bin/gsl-2.7/lib
+export CFLAGS="-I/home/USERNAME/bin/gsl-2.7/include"
+export LDFLAGS="-L/home/USERNAME/bin/gsl-2.7/lib"
+
+#close and reopen terminal to refresh new .bashrc settings
+source /home/USERNAME/python2env/bin/activate
+cd /home/USERNAME/bin
+mkdir fastStructure
+cd fastStructure
+sudo apt-get install python-dev
+
+#close and reopen terminal to refresh new global settings
+source /home/USERNAME/python2env/bin/activate
+
+#install fastStructure
+cd /home/USERNAME/bin/fastStructure
+wget --no-check-certificate https://github.com/rajanil/fastStructure/archive/master.tar.gz
+tar -xf master.tar.gz
+cd fastStructure-master/vars
+python setup.py build_ext -f --inplace
+cd ..
+
+#test installation
+python /home/USERNAME/bin/fastStructure/fastStructure-master/structure.py
+
+#always activate python2 virtual environment before running the structure.py script!
+#VCF format can be converted to structure format with PGDSpider2
