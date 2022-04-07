@@ -1,4 +1,6 @@
 # DArTseq_pipeline
+## UNDER DEVELOPMENT - WORK IN PROGRESS
+
 Scripts for DArTseq_pipeline
 
 Identify_barcodes.py for writing a fasta file containing the barcode for a sample. Identify_barcodes_loop is a bash script that loops over all FASTQ.gz files in the directory and writes a new line for every sample in the fasta output (TableOfBarcodes.fasta).
