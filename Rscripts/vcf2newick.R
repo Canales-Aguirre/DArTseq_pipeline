@@ -22,7 +22,8 @@ set.seed(1000) 	#Following https://benbowlab.github.io/Phylogeny.html
 
 #Generate IBS, matrix, and tree
 ibs.hc <- snpgdsHCluster(snpgdsIBS(genofile,num.thread=2, autosome.only=FALSE))
-dissMatrix  =  snpgdsIBS(genofile , sample.id=NULL, autosome.only=FALSE, remove.monosnp=TRUE,  maf=NaN, missing.rate=NaN, num.thread=2, verbose=TRUE)	snpHCluster =  snpgdsHCluster(dissMatrix, sample.id=NULL, need.mat=TRUE, hang=0.01)	
+dissMatrix  =  snpgdsIBS(genofile, sample.id=NULL, autosome.only=FALSE, remove.monosnp=TRUE,  maf=NaN, missing.rate=NaN, num.thread=2, verbose=TRUE)	
+snpHCluster =  snpgdsHCluster(dissMatrix, sample.id=NULL, need.mat=TRUE, hang=0.01)	
 cutTree = snpgdsCutTree(snpHCluster, z.threshold=15, outlier.n=5, n.perm = 5000, samp.group=NULL, col.outlier="red", col.list=NULL, pch.outlier=4, pch.list=NULL, label.H=FALSE, label.Z=TRUE, verbose=TRUE)		
 rv <- snpgdsCutTree(ibs.hc)
 plot(rv$dendrogram,main="Tree")
