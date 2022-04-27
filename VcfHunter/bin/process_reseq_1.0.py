@@ -39,7 +39,6 @@ import gzip
 from inspect import currentframe, getframeinfo
 from operator import itemgetter
 from Bio.Seq import Seq
-from Bio.Alphabet import generic_dna
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 import utilsSR.utilsSR as utils
