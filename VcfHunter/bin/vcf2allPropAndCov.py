@@ -33,7 +33,7 @@ from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.patches as mpatches
-from scipy.interpolate import spline
+from scipy.interpolate import make_interp_spline
 from textwrap import wrap
 
 def is_number(s):
