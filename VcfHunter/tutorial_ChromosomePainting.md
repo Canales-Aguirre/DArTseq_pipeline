@@ -51,7 +51,7 @@ chromosomes of the same origin respectively for triploid (see Figure below (C)) 
 a ratio of 0.25, 0.5, 0.75 for one, two and three ancestral chromosomes of the same
 origin respectively for tetraploid accession (see Figure below (D)).
 
-![image](https://github.com/sanderdebacker/DArTseq_pipeline/tree/main/VcfHunter/images/AllelePropAndCov_Fig1.png)
+![Alt text](../images/AllelePropAndCov_Fig1.png)
 
 In addition, for each position where an allele can be attributed to a group, the read
 coverage for the accession is calculated. An average coverage is then calculated for
