@@ -9,7 +9,7 @@ for file in ./*FASTQ.gz; do
 done
 
 #for fasta/fastq files
-# for file in ./*fasta; do #can be fastq
+# for file in ./*fastq; do #can be fasta
 #	python3 Identify_barcode.py -f "$file" -e PstI --symbol @A
 # done
 
