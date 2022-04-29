@@ -3,6 +3,7 @@
 #Github Guide: https://gist.github.com/josiahaltschuler/a063e03b4197013def53f9a0abc6dfed
 
 #replace USERNAME with YOUR ubuntu account name!
+
 #update system and install packages
 sudo apt update
 sudo apt upgrade
