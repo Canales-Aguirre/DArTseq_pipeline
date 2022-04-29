@@ -38,17 +38,17 @@ done
 
 for file in ./*sam; do
 	CONDITION=`basename $file .sam`
-	/usr/bin/java -Xmx4G -jar ./Dependencies/picard.jar AddOrReplaceReadGroups -I $file -O "${file%.sam}.sorted.bam" --CREATE_INDEX -SO coordinate -RGLB "$CONDITION" -RGPL illumina -RGPU run -RGSM "$CONDITION" -RGID "$CONDITION"
+	/usr/bin/java -Xmx4G -jar ./Dependencies/picard.jar AddOrReplaceReadGroups -I $file -O "${file%.sam}_recalibrated.bam" --CREATE_INDEX -SO coordinate -RGLB "$CONDITION" -RGPL illumina -RGPU run -RGSM "$CONDITION" -RGID "$CONDITION"
 done
 
 #############################################
 #Variant Calling with FreeBayes v1.3.5
 #############################################
 
-for file in ./*sorted.bam; do
+for file in ./*_recalibrated.bam; do
 	date "+%H:%M:%S   %d/%m/%y"
-	echo "Variant Calling with FreeBayes v1.3.5 on $file..."
-	freebayes -f $REF --genotype-qualities --strict-vcf $file > "${file%.sorted.bam}.freebayes.vcf"
+	echo "Variant Calling with FreeBayes v1.3.6 on $file..."
+	freebayes -f $REF --genotype-qualities --strict-vcf $file > "${file%_recalibrated.bam}.freebayes.vcf"
 done
 
 #############################################
