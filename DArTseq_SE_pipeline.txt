@@ -1,6 +1,6 @@
 #!/bin/bash
 
-REF=./Reference/Musac_pahang_Ref.fasta
+REF=/mnt/f/DArTseq/Reference/Musac_pahang_Ref.fasta
 
 #############################################
 #Preprocessing with GBprocesS (Cutadapt v3.3)
