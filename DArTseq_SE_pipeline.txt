@@ -52,6 +52,16 @@ for file in ./*_recalibrated.bam; do
 done
 
 #############################################
+#Variant Calling with UnifiedGenotyper
+#############################################
+
+#for file in ./*_recalibrated.bam; do
+#	date "+%H:%M:%S   %d/%m/%y"
+#	echo "Variant Calling with UnifiedGenotyper (GATK3.7) on $file..."
+#	/usr/bin/java -jar ./Dependencies/GATK3.7/GenomeAnalysisTK.jar -T UnifiedGenotyper -R $REF -I $file -o "${file%_recalibrated.bam}.UG.vcf"
+#done
+
+#############################################
 #Variant filtering with GATK v4.2
 #############################################
 
