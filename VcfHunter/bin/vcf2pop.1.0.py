@@ -986,14 +986,14 @@ def draw_statistics_plot(OUT, ALLELE_RATIO, COVERAGE_RATIO, MISSING, GLOB_KHI2, 
 	
 	fig = plt.figure(1)
 	ax = plt.subplot(221)
-	n, bins, patches = ax.hist(COVERAGE_RATIO, 100, normed=1, facecolor='b', linewidth=0.001)
+	n, bins, patches = ax.hist(COVERAGE_RATIO, 100, density=True, facecolor='b', linewidth=0.001)
 	ax.axvline(x=MINCOV, color='r')
 	ax.tick_params(axis='x', labelsize=8)
 	ax.tick_params(axis='y', labelsize=8)
 	ax.set_title('Site coverage (excluding 0)', fontweight='bold', fontsize=10)
 	
 	ax = plt.subplot(222)
-	n, bins, patches = ax.hist(ALLELE_RATIO, 50, normed=1, facecolor='b', linewidth=0.001)
+	n, bins, patches = ax.hist(ALLELE_RATIO, 50, density=True, facecolor='b', linewidth=0.001)
 	if WINFREQ:
 		winfreq = list(map(float, WINFREQ.split(':')))
 		ax.axvline(x=winfreq[0], color='r')
@@ -1003,14 +1003,14 @@ def draw_statistics_plot(OUT, ALLELE_RATIO, COVERAGE_RATIO, MISSING, GLOB_KHI2, 
 	ax.set_title('Minimal allele ratio (excluding 0)', fontweight='bold', fontsize=10)
 	
 	ax = plt.subplot(223)
-	n, bins, patches = ax.hist(MISSING, 100, normed=1, facecolor='b', linewidth=0.001)
+	n, bins, patches = ax.hist(MISSING, 100, density=True, facecolor='b', linewidth=0.001)
 	ax.axvline(x=MAX_MISSING, color='r')
 	ax.tick_params(axis='x', labelsize=8)
 	ax.tick_params(axis='y', labelsize=8)
 	ax.set_title('Missing data proportion', fontweight='bold', fontsize=10)
 	
 	ax = plt.subplot(224)
-	n, bins, patches = ax.hist(GLOB_KHI2, 100, normed=1, facecolor='b', linewidth=0.001)
+	n, bins, patches = ax.hist(GLOB_KHI2, 100, density=True, facecolor='b', linewidth=0.001)
 	ax.axvline(x=math.log(PVALUE, 10), color='r')
 	ax.tick_params(axis='x', labelsize=8)
 	ax.tick_params(axis='y', labelsize=8)
