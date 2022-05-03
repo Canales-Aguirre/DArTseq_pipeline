@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#Reference Variable
+#Change the name and path to that of YOUR reference file!
 REF=/mnt/f/DArTseq/Reference/Musac_pahang_Ref.fasta
 
 #############################################
@@ -8,6 +10,7 @@ REF=/mnt/f/DArTseq/Reference/Musac_pahang_Ref.fasta
 
 gbprocess --debug -c Gbprocess_SE.ini
 
+#Remove the unwanted files
 rm -r untrimmed*
 rm -r *Trimmed*
 rm -r *.out
@@ -24,7 +27,10 @@ done
 
 multiqc .
 
+#Remove the unwanted files
 rm -r multiqc_data/
+rm -r *_fastqc.html
+rm -r *_fastqc.zip
 
 #############################################
 #Mapping with BWA and sorting with picard
@@ -42,7 +48,7 @@ for file in ./*sam; do
 done
 
 #############################################
-#Variant Calling with FreeBayes v1.3.5
+#Variant Calling with FreeBayes v1.3.6
 #############################################
 
 for file in ./*_recalibrated.bam; do
@@ -58,7 +64,7 @@ done
 #for file in ./*_recalibrated.bam; do
 #	date "+%H:%M:%S   %d/%m/%y"
 #	echo "Variant Calling with UnifiedGenotyper (GATK3.7) on $file..."
-#	/usr/bin/java -jar ./Dependencies/GATK3.7/GenomeAnalysisTK.jar -T UnifiedGenotyper -R $REF -I $file -o "${file%_recalibrated.bam}.UG.vcf"
+#	/usr/bin/java -jar ./Dependencies/GATK3.7/GenomeAnalysisTK.jar -T UnifiedGenotyper -R $REF -I $file -o "${file%_recalibrated.bam}.UniGeno.vcf"
 #done
 
 #############################################
