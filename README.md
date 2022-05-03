@@ -12,3 +12,4 @@ The DArTseq_pipeline.txt is a bash script that runs multiple commands for every 
 Output are VCF files.
 
 ![DArTseq_pipeline](https://user-images.githubusercontent.com/91179859/153420119-d8b21336-0e79-4842-8f80-85ed7b449bf8.png)
+![DArTseq_pipeline_2](https://github.com/sanderdebacker/DArTseq_pipeline/blob/main/DArTseq_pipeline_2.png?raw=true)
