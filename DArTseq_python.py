@@ -27,16 +27,16 @@ parser.add_argument('--novariantfilter', action = 'store_true', help = 'skip the
 args = vars(parser.parse_args())
 
 # Check for required arguments
-if args['reference'] == None:
+if args['reference'] is None:
     print("Oops, somthing went wrong...")
     sys.exit('Argument missing: --reference argument is required.')
-elif args['notrimming'] is False and args['gbprocess'] == None:
+elif not args['notrimming'] and args['gbprocess'] is None:
     print("Oops, somthing went wrong...")
     sys.exit('Argument missing: --gbprocess argument is required for the GBprocesS trimming step. Documentation available at https://gbprocess.readthedocs.io/en/latest/. Otherwise use the --notrimming argument.')
-elif args['noaddreadgroup'] is False and args['picard'] == None:
+elif not args['noaddreadgroup'] and args['picard'] is None:
     print("Oops, somthing went wrong...")
     sys.exit('Argument missing: --picard argument is required for the AddOrReplaceReadGroup step. Otherwise use the --noaddreadgroup argument.')
-elif args['novariantfilter'] is False and args['gatk4'] == None:
+elif not args['novariantfilter'] and args['gatk4'] is None:
     print("Oops, somthing went wrong...")
     sys.exit('Argument missing: --gatk4 argument is required for the variant filtration step. Otherwise use the --novariantfilter argument.')
 
@@ -83,30 +83,30 @@ def filter_vcf(fb_vcf):
     subprocess.run([args['gatk4'], "SelectVariants", "-R", args['reference'], "-V", fb_vcf, "--select-type-to-include", "SNP", "-O", name + ".filtered.vcf"])
 
 # ANALYSIS  
-if args['notrimming'] is False:
+if not args['notrimming']:
     print_date()
     trimming()
       
 for file in os.listdir():
     if file.endswith(".GBprocesS.FASTQ.gz"):
-        if args['nomapping'] is False:
+        if not args['nomapping']:
             print_date()
             mapping(file)
        
 for file in os.listdir():
-    if file.endswith(".GBprocesS.sam"):
-        if args['noaddreadgroup'] is False:
+    if file.endswith(".sam"):
+        if not args['noaddreadgroup']:
             print_date()
             add_rg(file)
         
 for file in os.listdir():
-    if file.endswith("GBprocesS.recalibrated.bam"):
-        if args['novariantcalling'] is False:
+    if file.endswith(".recalibrated.bam"):
+        if not args['novariantcalling']:
             print_date()
             varcal_freebayes(file)
             
 for file in os.listdir():
-    if file.endswith("GBprocesS.recalibrated.freebayes.vcf"):
-        if args['novariantfilter'] is False:
+    if file.endswith(".recalibrated.freebayes.vcf"):
+        if not args['novariantfilter']:
             print_date()
             filter_vcf(file)
