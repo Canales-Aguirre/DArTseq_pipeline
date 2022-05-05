@@ -1,13 +1,17 @@
-#/bin/python3
+#!usr/bin/python3
 
 import os, sys, argparse, subprocess
+from datetime import datetime
 
 # ARGUMENTS
 # Create an ArgumentParser object
 parser = argparse.ArgumentParser(description = 'Process raw fastq reads into VCF files.')
 
-# Required arguments
+# Required arguments for entire pipeline
 parser.add_argument('--reference', '--r', type = str, help = 'Reference fasta file.')
+
+# Required arguments for some steps
+parser.add_argument('--gbprocess', '--gbp', type = str, help = 'Path to the configuration file (.ini) for GBprocesS. Documentation available at https://gbprocess.readthedocs.io/en/latest/.')
 parser.add_argument('--picard', '--p', type = str, help = 'Path to picard.jar.')
 parser.add_argument('--gatk4', '--g', type = str, help = 'Path to GATK4 installation')
 
@@ -26,18 +30,28 @@ args = vars(parser.parse_args())
 if args['reference'] == None:
     print("Oops, somthing went wrong...")
     sys.exit('Argument missing: --reference argument is required.')
+elif args['notrimming'] is False and args['gbprocess'] == None:
+    print("Oops, somthing went wrong...")
+    sys.exit('Argument missing: --gbprocess argument is required for the GBprocesS trimming step. Documentation available at https://gbprocess.readthedocs.io/en/latest/. Otherwise use the --notrimming argument.')
 elif args['noaddreadgroup'] is False and args['picard'] == None:
     print("Oops, somthing went wrong...")
-    sys.exit('Argument missing: --picard argument is required for the AddOrReplaceReadGroup step. Otherwise use --noaddreadgroup argument.')
+    sys.exit('Argument missing: --picard argument is required for the AddOrReplaceReadGroup step. Otherwise use the --noaddreadgroup argument.')
 elif args['novariantfilter'] is False and args['gatk4'] == None:
     print("Oops, somthing went wrong...")
-    sys.exit('Argument missing: --gatk4 argument is required for the variant filtration step. Otherwise use --novariantfilter argument.')
+    sys.exit('Argument missing: --gatk4 argument is required for the variant filtration step. Otherwise use the --novariantfilter argument.')
 
 # DEFINE FUNCTIONS
-# Trimming with GBprocesS
-def trimming(raw):
-    """Trimming of the raw fastq files with GBprocesS (cutadapt)."""
+def print_date():
+    """Print the current date and time to stderr."""
+    sys.stderr.write('********************\n')
+    sys.stderr.write('{}\n'.format(datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+    sys.stderr.write('********************\n\n')
+    return
     
+# Trimming with GBprocesS
+def trimming():
+    """Trimming of the raw fastq files with GBprocesS (cutadapt)."""
+    subprocess.run(["gbprocess", "-c", args['gbprocess']])
 
 # Mapping with BWA MEM
 def mapping(gz):
@@ -68,23 +82,31 @@ def filter_vcf(fb_vcf):
     print("Filtering SNPs from " + fb_vcf + " and writing new VCF file...")
     subprocess.run([args['gatk4'], "SelectVariants", "-R", args['reference'], "-V", fb_vcf, "--select-type-to-include", "SNP", "-O", name + ".filtered.vcf"])
 
-# ANALYSIS        
+# ANALYSIS  
+if args['notrimming'] is False:
+    print_date()
+    trimming()
+      
 for file in os.listdir():
     if file.endswith(".GBprocesS.FASTQ.gz"):
         if args['nomapping'] is False:
+            print_date()
             mapping(file)
        
 for file in os.listdir():
-    if file.endswith(".sam"):
+    if file.endswith(".GBprocesS.sam"):
         if args['noaddreadgroup'] is False:
+            print_date()
             add_rg(file)
         
 for file in os.listdir():
-    if file.endswith(".bam"):
+    if file.endswith("GBprocesS.recalibrated.bam"):
         if args['novariantcalling'] is False:
+            print_date()
             varcal_freebayes(file)
             
 for file in os.listdir():
-    if file.endswith(".freebayes.vcf"):
+    if file.endswith("GBprocesS.recalibrated.freebayes.vcf"):
         if args['novariantfilter'] is False:
+            print_date()
             filter_vcf(file)
