@@ -11,4 +11,6 @@ The DArTseq_pipeline.py is a python script that runs multiple commands for every
 
 Output are VCF files.
 
+Broad description available in the DArTseq_pipeline_Manual pdf file.
+
 ![DArTseq_pipeline](https://github.com/sanderdebacker/DArTseq_pipeline/blob/main/Images/DArTseq_pipeline.png?raw=true)
