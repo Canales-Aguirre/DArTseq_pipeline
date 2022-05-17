@@ -57,7 +57,7 @@ def trimming():
 # Mapping with BWA MEM
 def mapping(gz):
     """Mapping of raw fastq.gz file on reference sequence."""
-    name = (os.path.splitext((os.path.splitext(gz))[0]))[0]
+    name = (os.path.splitext((os.path.splitext((os.path.splitext(gz))[0]))[0]))[0]
     ref = os.path.basename(args['reference'])
     print("Mapping " + gz + " on " + ref + "... Writing " + (name + ".sam"))
     subprocess.run(["bwa", "mem", "-t", str(args['threads']), args['reference'], gz, "-o", name + ".sam"])
