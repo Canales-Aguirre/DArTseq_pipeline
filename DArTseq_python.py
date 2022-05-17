@@ -52,6 +52,7 @@ def print_date():
 def trimming():
     """Trimming of the raw fastq files with GBprocesS (cutadapt)."""
     subprocess.run(["gbprocess", "-c", args['gbprocess'], "--debug"])
+    subprocess.run(["rm", "*Trimmed*"])
 
 # Mapping with BWA MEM
 def mapping(gz):
