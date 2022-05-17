@@ -43,6 +43,7 @@ elif not args['novariantfilter'] and args['gatk4'] is None:
 # DEFINE FUNCTIONS
 def print_date():
     """Print the current date and time to stderr."""
+    sys.stderr.write('                    \n')
     sys.stderr.write('********************\n')
     sys.stderr.write('{}\n'.format(datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
     sys.stderr.write('********************\n\n')
