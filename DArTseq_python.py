@@ -89,7 +89,7 @@ if not args['notrimming']:
     trimming()
       
 for file in os.listdir():
-    if file.endswith(".GBprocesS.FASTQ.gz"):
+    if file.endswith(".GBprocesS.fastq.gz"):
         if not args['nomapping']:
             print_date()
             mapping(file)
