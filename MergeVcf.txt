@@ -1,0 +1,11 @@
+#!/bin/bash
+
+for file in *filtered.vcf; do
+  bgzip $file
+done
+
+for file in *filtered.vcf.gz; do
+  tabix -f -h $file
+done
+
+bcftools merge *filtered.vcf.gz --threads 4 -0 -Oz -o PREFIX.vcf.gz 
