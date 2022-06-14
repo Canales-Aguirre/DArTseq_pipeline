@@ -8,7 +8,7 @@ from datetime import datetime
 parser = argparse.ArgumentParser(description = 'Process raw fastq reads into VCF files.')
 
 # Required arguments for entire pipeline
-parser.add_argument('--reference', '--r', type = str, required, help = 'Reference fasta file.')
+parser.add_argument('--reference', '--r', type = str, required=True, help = 'Reference fasta file.')
 
 # Required arguments for some steps
 parser.add_argument('--gbprocess', '--gbp', type = str, help = 'Path to the configuration file (.ini) for GBprocesS. Documentation available at https://gbprocess.readthedocs.io/en/latest/.')
