@@ -183,7 +183,7 @@ def delineate_regions(out_dir = args['out_dir'], poly_only = args['polymorphic_c
         
         #Add loci the regions dictionary.
         for i in C:
-            if poly_only and i[10] != '.':
+            if not poly_only or i[10] != '.':
                 regions = create_region(i, regions, type)
             
     print('\tCreating consensus sequences for {} regions.\n'.format(len(regions)))
@@ -313,7 +313,7 @@ def extract_consensus(sample, ploidy = args['ploidy'], no_del = args['ignore_del
             
             if len(region_hts) > 0 and type != 'other':
                 #Remove haplotypes with a read count lower than the predefined minimum read count and frequency.
-                region_hts = {ht : region_hts[ht] for ht in region_hts if region_hts[ht] >= min_nr_reads and region_hts[ht] / sum(region_hts.values()) >= min_freq}
+                region_hts = [ht for ht in region_hts.keys() if region_hts[ht] >= min_nr_reads and region_hts[ht] / sum(region_hts.values()) >= min_freq]
                 
                 #Remove regions with more haplotypes than the ploidy level (optional))
                 if ploidy_filtered and len(region_hts) > ploidy:
@@ -321,25 +321,23 @@ def extract_consensus(sample, ploidy = args['ploidy'], no_del = args['ignore_del
             
             #Convert positions in non stack-based sequencing data to missing data if the read count is lower than the predefined minimum.
             elif len(region_hts) > 0:
+                region_hts_new = list(region_hts.keys())
                 for i, _ in enumerate(list(region_hts.keys())[0]):
-                    region_hts_new = dict()
-                    count = sum([region_hts[ht] for ht in region_hts if ht[i] not in ('+', '.')])
-                    for ht in region_hts.keys():
-                        if count < min_nr_reads:
-                            ht_new = ht[:i] + '+' + ht[i + 1:]
-                        else:
-                            ht_new = ht
-                        if ht_new not in region_hts_new:
-                            region_hts_new[ht_new] = region_hts[ht]
-                        else:
-                            region_hts_new[ht_new] += region_hts[ht]
-                    region_hts = region_hts_new
+                    total_count = sum([region_hts[ht] for ht in region_hts if ht[i] not in ('+', '.')])
+                    allele_count = sum([region_hts[ht] for ht in region_hts if ht[i] == '1'])
+                    if total_count < min_nr_reads:
+                        region_hts_new = [ht[:i] + '+' + ht[i + 1:] for ht in region_hts_new]
+                    elif allele_count / total_count < min_freq:
+                        region_hts_new = [ht[:i] + '0' + ht[i + 1:] if ht[i] == '1' else ht for ht in region_hts_new]
+                    elif allele_count / total_count > 1 - min_freq:
+                        region_hts_new = [ht[:i] + '1' + ht[i + 1:] if ht[i] == '0' else ht for ht in region_hts_new]
+                region_hts = list(set(region_hts_new))
                     
             #Create a consensus haplotype.
             if len(region_hts) > 0:
-                consensus = list(list(region_hts.keys())[0])
+                consensus = list(region_hts[0])
                 
-                for ht in region_hts.keys():
+                for ht in region_hts[1:]:
                     for i, site in enumerate(ht):
                         if site != consensus[i]:
                             if consensus[i] == '.':
@@ -358,7 +356,7 @@ def extract_consensus(sample, ploidy = args['ploidy'], no_del = args['ignore_del
                                     
                                 elif site not in ('-', '+'):
                                     #Heterozygous positions
-                                    if consensus[i] in ('0', '1'):
+                                    if consensus[i] in ('0', '1', '2'):
                                         consensus[i] = '2'
                                         
                                     #Homozygous positions
