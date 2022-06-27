@@ -2,26 +2,40 @@
 
 #tools: bamtools, bedops, samtools, SMAP
 
+# remove unmapped reads
 for file in ./*bam; do
-	samtools view $file chr{01..11} -b > "${file%.bam}.chr.bam"
+    samtools view -b -F 4 $file > "${file%.bam}.mapped.bam"
 done
 
-for file in ./*chr.bam; do
+# split BAMs into reference segments
+for file in ./*mapped.bam; do
 	bamtools split -in $file -reference
 done
 
+# clean up directory
+mkdir CHLORO
+mkdir MITO
+mv *mitochondrion* ./MITO/
+mv *chloroplast* ./CHLORO/
 for i in {01..11}; do
-	mkdir "chrom$i"
-	mv *chr$i* ./"chrom$i"/
+	mkdir "CHROM$i"
+	mv *chr$i* ./"CHROM$i"/
 done
 
-for file in ./chrom*/*bam; do
+# index all the new BAMs
+for file in ./*/*bam; do
 	samtools index $file
 done
 
+# smap delineate for each reference segment
+smap delineate MITO/ -r stranded -p 4 -q 20 -s 20 -x 3 -y 1500 -w 95
+mv *Set1_C95.0_SMAP20_CL0_inf.bed "ReadPositionsMITO.bed"
+smap delineate CHLORO/ -r stranded -p 4 -q 20 -s 20 -x 3 -y 1500 -w 95
+mv *Set1_C95.0_SMAP20_CL0_inf.bed "ReadPositionsCHLORO.bed"
 for i in {01..11}; do
-	smap delineate "chrom$i"/ -r stranded -p 4 -q 20 -s 20 -x 3 -y 1500 -w 95
+	smap delineate "CHROM$i"/ -r stranded -p 4 -q 20 -s 20 -x 3 -y 1500 -w 95
 	mv *Set1_C95.0_SMAP20_CL0_inf.bed "ReadPositionsChr$i.bed"
 done
 
-bedops --merge ReadPositionsChr* > CompletePositions.bed
+# merging BEDs into one
+bedops --merge ReadPositions* > CompletePositions.bed
