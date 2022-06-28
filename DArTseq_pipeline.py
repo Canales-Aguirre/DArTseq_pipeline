@@ -13,7 +13,7 @@ parser.add_argument('--reference', '--r', type = str, required=True, help = 'Ref
 # Required arguments for some steps
 parser.add_argument('--gbprocess', '--gbp', type = str, help = 'Path to the configuration file (.ini) for GBprocesS. Documentation available at https://gbprocess.readthedocs.io/en/latest/.')
 parser.add_argument('--picard', '--p', type = str, help = 'Path to picard.jar.')
-parser.add_argument('--gatk4', '--g', type = str, help = 'Path to GATK4 installation')
+parser.add_argument('--gatk4', '--g', type = str, help = 'Path to GATK4 installation.')
 
 # Optional arguments
 parser.add_argument('--threads', '--t', default = 1, type = int, help = 'Number of threads to be used.')
@@ -23,8 +23,9 @@ parser.add_argument('--noaddreadgroup', action = 'store_true', help = 'Skip the 
 parser.add_argument('--novariantcalling', action = 'store_true', help = 'Skip the FreeBayes variant calling step.')
 parser.add_argument('--novariantfilter', action = 'store_true', help = 'Skip the GATK4 variant filtration step.')
 
-# Compatibility with other tools
+# Extra utilities
 parser.add_argument('--vcfhunter', action = 'store_false', help = 'By default the BAM file name is SAMPLE.BAM. Enable this argument for naming compatibility with VcfHunter (_real_recal.bam).')
+parser.add_argument('--merge', action = 'store_false', help = 'Use to merge the final filtered SNP VCF files, outputted as mergedVCF.vcf.gz')
 
 # Parse arguments to a dictionary
 args = vars(parser.parse_args())
@@ -93,6 +94,14 @@ def filter_vcf(fb_vcf):
     print("Filtering SNPs from " + fb_vcf + " and writing new VCF file...")
     subprocess.run([args['gatk4'], "SelectVariants", "-R", args['reference'], "-V", fb_vcf, "--select-type-to-include", "SNP", "-O", name + ".filtered.vcf"])
 
+# Merging VCF files into one multi-sample VCF
+def merge_vcf():
+    for file in os.listdir():
+        if file.endswith(".filtered.vcf"):  
+            subprocess.run(["bgzip", file])
+            subprocess.run(["tabix", "-f", "-h", file + ".gz"])
+    subprocess.run(["bcftools", "merge", "./*filtered.vcf.gz", "--threads", str(args['threads']), "-0", "-Oz", "-o", "mergedVCF.vcf.gz"])
+
 # ANALYSIS  
 if not args['notrimming']:
     print_date()
@@ -121,3 +130,6 @@ for file in os.listdir():
         if not args['novariantfilter']:
             print_date()
             filter_vcf(file)
+            
+if args['merge']:
+    merge_vcf()
