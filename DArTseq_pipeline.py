@@ -16,12 +16,15 @@ parser.add_argument('--picard', '--p', type = str, help = 'Path to picard.jar.')
 parser.add_argument('--gatk4', '--g', type = str, help = 'Path to GATK4 installation')
 
 # Optional arguments
-parser.add_argument('--threads', '--t', default = 1, type = int, help = 'number of threads to be used.')
-parser.add_argument('--notrimming', action = 'store_true', help = 'skip the GBprocesS trimming step.')
-parser.add_argument('--nomapping', action = 'store_true', help = 'skip the BWA MEM mapping step.')
-parser.add_argument('--noaddreadgroup', action = 'store_true', help = 'skip the AddOrReplaceReadGroups (picard) step.')
-parser.add_argument('--novariantcalling', action = 'store_true', help = 'skip the FreeBayes variant calling step.')
-parser.add_argument('--novariantfilter', action = 'store_true', help = 'skip the GATK4 variant filtration step.')
+parser.add_argument('--threads', '--t', default = 1, type = int, help = 'Number of threads to be used.')
+parser.add_argument('--notrimming', action = 'store_true', help = 'Skip the GBprocesS trimming step.')
+parser.add_argument('--nomapping', action = 'store_true', help = 'Skip the BWA MEM mapping step.')
+parser.add_argument('--noaddreadgroup', action = 'store_true', help = 'Skip the AddOrReplaceReadGroups (picard) step.')
+parser.add_argument('--novariantcalling', action = 'store_true', help = 'Skip the FreeBayes variant calling step.')
+parser.add_argument('--novariantfilter', action = 'store_true', help = 'Skip the GATK4 variant filtration step.')
+
+# Compatibility with other tools
+parser.add_argument('--vcfhunter', action = 'store_false', help = 'By default the BAM file name is SAMPLE.BAM. Enable this argument for naming compatibility with VcfHunter (_real_recal.bam).')
 
 # Parse arguments to a dictionary
 args = vars(parser.parse_args())
@@ -69,9 +72,13 @@ def mapping(gz):
 def add_rg(sam):
     """Reorganising SAM file with AddOrReplaceReadGroups (picard) and writing BAM file."""
     name = (os.path.splitext(sam))[0]
-    print("Reorganising " + sam + "... Writing " + name + ".recalibrated.bam")
-    subprocess.run(["java", "-jar", args['picard'], "AddOrReplaceReadGroups", "-I", sam, "-O", name + ".recalibrated.bam", "--CREATE_INDEX", "-SO", "coordinate", "-RGLB", name, "-RGPL", "illumina", "-RGPU", "run", "-RGSM", name, "-RGID", name])
-
+    if not args['vcfhunter']:
+        print("Reorganising " + sam + "... Writing " + name + ".bam")
+        subprocess.run(["java", "-jar", args['picard'], "AddOrReplaceReadGroups", "-I", sam, "-O", name + ".bam", "--CREATE_INDEX", "-SO", "coordinate", "-RGLB", name, "-RGPL", "illumina", "-RGPU", "run", "-RGSM", name, "-RGID", name])
+    else:
+       print("Reorganising " + sam + "... Writing " + name + "_real_recal.bam")
+        subprocess.run(["java", "-jar", args['picard'], "AddOrReplaceReadGroups", "-I", sam, "-O", name + "_real_recal.bam", "--CREATE_INDEX", "-SO", "coordinate", "-RGLB", name, "-RGPL", "illumina", "-RGPU", "run", "-RGSM", name, "-RGID", name]) 
+        
 # Variant calling with FreeBayes
 def varcal_freebayes(bam):
     """Variant calling on the BAM file with FreeBayes."""
@@ -104,13 +111,13 @@ for file in os.listdir():
             add_rg(file)
         
 for file in os.listdir():
-    if file.endswith(".recalibrated.bam"):
+    if file.endswith(".bam"):
         if not args['novariantcalling']:
             print_date()
             varcal_freebayes(file)
             
 for file in os.listdir():
-    if file.endswith(".recalibrated.freebayes.vcf"):
+    if file.endswith(".freebayes.vcf"):
         if not args['novariantfilter']:
             print_date()
             filter_vcf(file)
