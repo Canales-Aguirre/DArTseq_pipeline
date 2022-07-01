@@ -28,12 +28,12 @@ def print_date():
 # Open FASTQ(.gz) and convert to fasta
 def fastq_to_fasta(fastq_file):
     if '.gz' in fastq_file:
-	    print 'Detected a .gz file.'
+	print 'Detected a .gz file.'
         name = (os.path.splitext((os.path.splitext(fastq_file))[0]))[0]
-	    fastq = gzip.open(fastq_file, 'rb')
+	fastq = gzip.open(fastq_file, 'rb')
     else:
         name = (os.path.splitext(fastq_file))[0]
-	    fastq = open(fastq_file, 'r')
+	fastq = open(fastq_file, 'r')
     subprocess.run(["sed", "-n", "'1~4s/^@/>/p;2~4p'", fastq, ">", name + ".fasta"])
     
 # Blast remotely against NCBI database
