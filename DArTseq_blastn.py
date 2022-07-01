@@ -44,7 +44,20 @@ def fastq_to_fasta(fastq_file):
             blast_file = open(name + ".blastn.out", 'a')
             subprocess.run(["blastn", "-db", "nt", "-query", name + ".temp.fasta", "-remote",  "-outfmt", "6"])
             blast_file.close()
-
+            
+# Open FASTQ(.gz) and convert to fasta
+def fastq_to_fasta(fastq_file):
+    """Convert FASTQ.gz into basic FASTA format and blastn each sequence."""
+    name = (os.path.splitext((os.path.splitext(fastq_file))[0]))[0]
+    with gzip.open(fastq_file, 'rt') as fastq:
+        for record in SeqIO.parse(fastq, "fastq"):
+            with open('temp.fasta', 'w') as temp_fasta:
+                temp_fasta.write('>'+record.id)
+                temp_fasta.write('\n')
+                temp_fasta.write(str(record.seq))
+                temp_fasta.close()
+            subprocess.run('/home/sander/bin/ncbi-blast-2.13.0+/bin/blastn -db nt -query temp.fasta -remote >> blast.out', shell=True)
+            
 # ANALYSIS
 
 fastq_to_fasta(args['sample'])
