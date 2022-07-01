@@ -35,15 +35,15 @@ def fastq_to_fasta(fastq_file):
     name = (os.path.splitext((os.path.splitext(fastq_file))[0]))[0]
     with gzip.open(fastq_file, 'rt') as fastq:
         for record in SeqIO.parse(fastq, "fastq"):
-            fasta_file = open(name + ".temp.fasta", 'w')
+            fasta_file = open(name + ".temp.fasta", 'a')
             fasta_file.write(">"+record.id)
             fasta_file.write("\n")
             fasta_file.write(str(record.seq))
+            fasta_file.write("\n")
             fasta_file.close()
             blast_file = open(name + ".blastn.out", 'a')
-            subprocess.run(["blastn", "-db", "nt", "-query", name + ".temp.fasta", "-remote", "-out", name + ".blast.out"])
+            subprocess.run(["blastn", "-db", "nt", "-query", name + ".temp.fasta", "-remote",  "-outfmt", "6"])
             blast_file.close()
-            time.sleep(0.5)
 
 # ANALYSIS
 
