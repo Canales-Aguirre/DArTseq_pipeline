@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 
-import os, sys, argparse, subprocess, gzip
+import os, sys, argparse, subprocess, gzip, time
 from Bio import SeqIO
 from datetime import datetime
+from pysam import FastxFile
 
 # ARGUMENTS
 # Create an ArgumentParser object
@@ -10,6 +11,9 @@ parser = argparse.ArgumentParser(description = 'Blast FASTQ.gz sequences remotel
 
 # Required arguments
 parser.add_argument('--sample', '-s', type = str, required=True, help = 'FASTQ.gz sample to blast.')
+
+# Parse arguments to a dictionary
+args = vars(parser.parse_args())
 
 # Check for required arguments
 if args['sample'] is None:
@@ -27,28 +31,20 @@ def print_date():
 
 # Open FASTQ(.gz) and convert to fasta
 def fastq_to_fasta(fastq_file):
-    if '.gz' in fastq_file:
-	print 'Detected a .gz file.'
-        name = (os.path.splitext((os.path.splitext(fastq_file))[0]))[0]
-	fastq = gzip.open(fastq_file, 'rb')
-    else:
-        name = (os.path.splitext(fastq_file))[0]
-	fastq = open(fastq_file, 'r')
-    subprocess.run(["sed", "-n", "'1~4s/^@/>/p;2~4p'", fastq, ">", name + ".fasta"])
-    
-# Blast remotely against NCBI database
-def DArTseq_blast(fastq_file)
-    """Blast newly converted fasta file remotely against NCBI nucleotide database. Each sequence is blasted seperately and merged at the end."""
-    if '.gz' in fastq_file:
-        name = (os.path.splitext((os.path.splitext(fastq_file))[0]))[0] 
-        fasta_file = name + ".fasta"
-    else:
-        name = (os.path.splitext(fastq_file))[0] + ".fasta"
-        fasta_file = name + ".fasta"
-    for record in SeqIO.parse(name, "fasta"):
-        subprocess.run(["blastn", "-db", "nt", "-query", fasta_file, "-num_alignments", "10", "-evalue", "0.01", "-word_size", "50", "-remote", ">", name + ".blast.out"])
+    """Convert FASTQ.gz into basic FASTA format and blastn each sequence."""
+    name = (os.path.splitext((os.path.splitext(fastq_file))[0]))[0]
+    with gzip.open(fastq_file, 'rt') as fastq:
+        for record in SeqIO.parse(fastq, "fastq"):
+            fasta_file = open(name + ".temp.fasta", 'w')
+            fasta_file.write(">"+record.id)
+            fasta_file.write("\n")
+            fasta_file.write(str(record.seq))
+            fasta_file.close()
+            blast_file = open(name + ".blastn.out", 'a')
+            subprocess.run(["blastn", "-db", "nt", "-query", name + ".temp.fasta", "-remote", "-out", name + ".blast.out"])
+            blast_file.close()
+            time.sleep(0.5)
 
 # ANALYSIS
 
 fastq_to_fasta(args['sample'])
-DArTseq_blast(args['sample'])
