@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# find every nexus file to analyse
+for file in ./*nexus; do
+  # make temporary file to work with
+  cp $file temp_file.nex
+	mb MrBayesBatch.nex
+  # rename temp_file output to inputprefix
+	mv temp_file.run1.p "${file%.nexus}.run1.p"
+	mv temp_file.run2.p "${file%.nexus}.run2.p"
+	mv temp_file.pstat "${file%.nexus}.pstat"
+	mv temp_file.run1.t "${file%.nexus}.run1.t"
+	mv temp_file.run2.t "${file%.nexus}.run2.t"
+	mv temp_file.con.tre "${file%.nexus}.con.tre"
+	mv temp_file.trprobs "${file%.nexus}.trprobs"
+	mv temp_file.lstat "${file%.nexus}.lstat"
+	mv temp_file.tstat "${file%.nexus}.tstat"
+	mv temp_file.vstat "${file%.nexus}.vstat"
+	mv temp_file.txt "${file%.nexus}.txt"
+	mv temp_file.ckp "${file%.nexus}.ckp"
+	mv temp_file.mcmc "${file%.nexus}.mcmc"
+	mv temp_file.parts "${file%.nexus}.parts"
+done
+
+# remove any remaining temp_files
+rm -r temp_file*
