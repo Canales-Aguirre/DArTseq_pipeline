@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# find every PHYLIP file in directory
+for file in ./*phy; do
+    iqtree -s $file -st DNA -pre "${file%.phy}" -v
+done
