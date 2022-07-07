@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# find every PHYLIP file in directory
+for file in ./*phy; do
+    raxml-ng --msa $file --data-type DNA --prefix "${file%.phy}" --model GTR+G --log DEBUG
+done
