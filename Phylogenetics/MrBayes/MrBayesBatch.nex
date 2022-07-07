@@ -1,0 +1,22 @@
+#NEXUS
+BEGIN mrbayes;
+[**************************************]
+[Read in the data and set preliminaries]
+[**************************************]
+  log start filename=temp_file.txt;      [log output to a text file]
+  set autoclose=yes nowarn=yes;          [needed to run in batch mode]
+  execute temp_file.nex;                 [read in the data file]
+[*****************************]
+[Analysis with MCMC parameters]
+[*****************************]
+  lset nst=6 rates=invgamma;												
+
+  mcmc data=yes nruns=2 nchains=4           [specify sampling with data]
+  ngen=20000 printfreq=100 samplefreq=100   [details of the MCMC analysis...]
+  diagnfreq=1000 diagnstat=maxstddev        [...and the diagnostics of MCMC]
+  
+  filename=temp_file;          [output filename]
+  sump filename=temp_file;     [summarize model parameters]
+  sumt filename=tempfile;      [summarize samples of trees]
+quit;
+END;	
