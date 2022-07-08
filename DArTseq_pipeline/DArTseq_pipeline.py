@@ -24,8 +24,8 @@ parser.add_argument('--novariantcalling', action = 'store_true', help = 'Skip th
 parser.add_argument('--novariantfilter', action = 'store_true', help = 'Skip the GATK4 variant filtration step.')
 
 # Extra utilities
-parser.add_argument('--vcfhunter', action = 'store_false', help = 'By default the BAM file name is SAMPLE.BAM. Enable this argument for naming compatibility with VcfHunter (_real_recal.bam).')
-parser.add_argument('--merge', action = 'store_false', help = 'Use to merge the final filtered SNP VCF files, outputted as mergedVCF.vcf.gz')
+parser.add_argument('--vcfhunter', action = 'store_true', help = 'By default the BAM file name is SAMPLE.BAM. Enable this argument for naming compatibility with VcfHunter (_real_recal.bam).')
+parser.add_argument('--merge', action = 'store_true', help = 'Use to merge the final filtered SNP VCF files, outputted as mergedVCF.vcf.gz')
 
 # Parse arguments to a dictionary
 args = vars(parser.parse_args())
