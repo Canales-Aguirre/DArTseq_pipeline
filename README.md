@@ -13,4 +13,7 @@ Output are VCF files.
 
 Broad description available in the DArTseq_pipeline_Manual pdf file.
 
+### Phylogenetics 
+Contains (for MrBayes, RAxML-NG, and IQTree) simple bash loop-scripts to automate analysis.
+
 ![DArTseq_pipeline](https://github.com/sanderdebacker/DArTseq_pipeline/blob/main/Images/DArTseq_pipeline.png?raw=true)

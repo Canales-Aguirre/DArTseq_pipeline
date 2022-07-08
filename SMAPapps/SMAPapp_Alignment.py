@@ -602,7 +602,7 @@ def export(alignment, region = None, f = args['format'], out_file = args['out'],
 def delete_intermediate(dir = args['out_dir']):
     for file in os.listdir(dir):
     #or file == 'vcf_alignment.vcf'
-        if file.endswith('.shelve.bak') or file.endswith('.shelve.dat') or file.endswith('.shelve.dir'):
+        if file.endswith('.shelve.bak') or file.endswith('.shelve.dat') or file.endswith('.shelve.dir') or file.endswith('.shelve'):
             os.remove('{}/{}'.format(dir, file))
     return
 
