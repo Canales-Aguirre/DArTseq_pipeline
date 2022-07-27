@@ -9,6 +9,8 @@ The DArTseq_pipeline.py is a python script that runs multiple commands for every
 Gbprocess_SE.ini contains the specifics for the GBprocesS analysis. Check the available online manual to change these settings to your analysis. **Important:** files need to have the same name length, and that length also needs to be specified in the .ini file.
 Broader description available in the **DArTseq_pipeline_manual.pdf** file.
 
+![DArTseq_pipeline](https://github.com/sanderdebacker/DArTseq_pipeline/blob/main/Images/DArTseq_pipeline.png?raw=true)
+
 ### Information
 Offers additional information about the Variant Call Format and installation guides for some tools (fastStructure).
 
@@ -34,5 +36,3 @@ Explains in detail multiple analyses performed on DArTseq data.
 
 ### Renamer.xlsm
 Excel worksheet using Macros to rename files en masse.
-
-![DArTseq_pipeline](https://github.com/sanderdebacker/DArTseq_pipeline/blob/main/Images/DArTseq_pipeline.png?raw=true)
