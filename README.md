@@ -7,9 +7,10 @@ Hub containing information and scripts for the DArTseq analysis pipeline.
 Contains the scripts and configuration files to process raw DArTseq FASTQ files into VCF files.
 The DArTseq_pipeline.py is a python script that runs multiple commands for every FASTQ.gz file in the directory.
 Gbprocess_SE.ini contains the specifics for the GBprocesS analysis. Check the available online manual to change these settings to your analysis. **Important:** files need to have the same name length, and that length also needs to be specified in the .ini file.
-Broader description available in the **DArTseq_pipeline_manual.pdf** file.
+Broader description available in the **DArTseq_pipeline_Manual.pdf** file.
 
 ![DArTseq_pipeline](https://github.com/sanderdebacker/DArTseq_pipeline/blob/main/Images/DArTseq_pipeline.png?raw=true)
+*Overview of the DArTseq pipeline: from raw FASTQ.gz files to VCF files.*
 
 ### Information
 Offers additional information about the Variant Call Format and installation guides for some tools (fastStructure).
@@ -30,7 +31,7 @@ Third-party toolbox to process NGS and variant call data.
 Some scripts were slightly adjusted to fit the available computing system.
 All credits to the creator(s).
 
-### DArTseq_pipeline_manual.pdf
+### DArTseq_pipeline_Manual.pdf
 More information about the scripts.
 Explains in detail multiple analyses performed on DArTseq data.
 
