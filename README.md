@@ -9,7 +9,7 @@ The DArTseq_pipeline.py is a python script that runs multiple commands for every
 Gbprocess_SE.ini contains the specifics for the GBprocesS analysis. Check the available online manual to change these settings to your analysis. **Important:** files need to have the same name length, and that length also needs to be specified in the .ini file.
 Broader description available in the **DArTseq_pipeline_Manual.pdf** file.
 
-![DArTseq_pipeline](https://github.com/sanderdebacker/DArTseq_pipeline/blob/main/Images/DArTseq_pipeline.png?raw=true | height=790)
+![DArTseq_pipeline](https://github.com/sanderdebacker/DArTseq_pipeline/blob/main/Images/DArTseq_pipeline.png | height=790)
 *Overview of the DArTseq pipeline: from raw FASTQ.gz files to VCF files.*
 
 ### Information
