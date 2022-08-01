@@ -10,7 +10,7 @@ Gbprocess_SE.ini contains the specifics for the GBprocesS analysis. Check the av
 Broader description available in the **DArTseq_pipeline_Manual.pdf** file.
 
 *Overview of the DArTseq pipeline: from raw FASTQ.gz files to VCF files.*
-<img src="https://github.com/sanderdebacker/DArTseq_pipeline/blob/main/Images/DArTseq_pipeline.png?raw=true" />
+<img src="https://github.com/sanderdebacker/DArTseq_pipeline/blob/main/Images/DArTseq_pipeline_1.png?raw=true" />
 
 ### Information
 Offers additional information about the Variant Call Format and installation guides for some tools (fastStructure).
